@@ -1,19 +1,19 @@
-const { handleCookie, conf } = require('../index')
-const { signApp } = require('../campusphere/app')
+const { handleCookie, conf } = require('../../index')
+const { signApp } = require('../../campusphere/app')
 
 // Grab users array
 const users = conf.get('users')
 // Grab school info
 const school = conf.get('school')
 
-;(async () => {
+async function handler() {
   // Log in and save cookie to conf, using conf.get('cookie') to get them
   await handleCookie()
   // wait * minute for signing
   await sleep(0)
   // Sign in
   await signIn()
-})()
+}
 
 async function sleep(timeout) {
   return new Promise(r => setTimeout(r, timeout * 1000 * 60))
@@ -34,3 +34,5 @@ async function signIn() {
     })
   )
 }
+
+exports.main = handler
