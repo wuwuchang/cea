@@ -2,9 +2,6 @@ const conf = require('./init')
 const login = require('./crawler/casLogIn')
 const { signApp } = require('./campusphere/app')
 
-const school = conf.get('school')
-const users = conf.get('users')
-
 /**
  * Keys of this cookie Object:
  * YOU CAN USE THIS COOKIE FOR EVERYTHING

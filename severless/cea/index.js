@@ -37,4 +37,3 @@ async function signIn() {
 }
 
 exports.main = handler
-handler()

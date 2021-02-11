@@ -1,10 +1,17 @@
-const Conf = require('conf')
 const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
 const log = require('./interface/colorLog')
-const conf = new Conf({ cwd: './node_modules' })
 
+class Conf {
+  get(key) {
+    return this[key]
+  }
+  set(key, value) {
+    this[key] = value
+  }
+}
+const conf = new Conf({ cwd: './node_modules' })
 module.exports = conf
 module.exports.load = async () => {
   const path = './conf.yml'
@@ -19,11 +26,7 @@ module.exports.load = async () => {
 }
 
 function initUser(doc) {
-  const users = conf.get('users') || []
-  // check duplicates
-  const storedUsers = users.map(e => e.username)
-  const loadedUsers = doc.users.filter(e => !storedUsers.includes(e.username))
-  conf.set('users', [...loadedUsers, ...users])
+  conf.set('users', doc.users)
 }
 
 async function initSchool(doc) {
