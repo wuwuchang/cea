@@ -1,14 +1,29 @@
-#!/usr/bin/env node
 const Conf = require('conf')
 const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
 const log = require('./interface/colorLog')
-const conf = new Conf()
+const conf = new Conf({ cwd: './node_modules' })
+
 module.exports = conf
+module.exports.load = async () => {
+  const path = './conf.yml'
+  if (fs.existsSync(path)) {
+    const doc = yaml.load(fs.readFileSync(path, 'utf8'))
+    if (!doc) return
+    initUser(doc)
+    if (!conf.get('school')) await initSchool(doc)
+  } else {
+    return
+  }
+}
 
 function initUser(doc) {
-  conf.set('users', doc.users)
+  const users = conf.get('users') || []
+  // check duplicates
+  const storedUsers = users.map(e => e.username)
+  const loadedUsers = doc.users.filter(e => !storedUsers.includes(e.username))
+  conf.set('users', [...loadedUsers, ...users])
 }
 
 async function initSchool(doc) {
@@ -20,6 +35,7 @@ async function initSchool(doc) {
   res = await JSON.parse(await res.text())
 
   const origin = new URL(res.data[0].ampUrl).origin
+  const isSignAtHome = doc.home
   const school = {
     origin,
     isSignAtHome,
@@ -32,7 +48,6 @@ async function initSchool(doc) {
   }
 
   const schoolName = res.data[0].name
-  const isSignAtHome = doc.home
 
   if (!isSignAtHome) {
     // get school address & coordinates(with baidu website's ak)
@@ -46,22 +61,10 @@ async function initSchool(doc) {
     school.addr = addr
   }
 
-  this.conf.set('school', school)
+  conf.set('school', school)
   log.success(
     `您的学校 ${schoolName} 已完成设定, 全局签到地址为：${
       school.addr ? school.addr : 'RANDOM'
     }`
   )
 }
-
-;(async () => {
-  const path = './userConf.yml'
-  if (fs.existsSync(path)) {
-    const doc = yaml.load(fs.readFileSync(path, 'utf8'))
-    if (!doc) return
-    initUser()
-    await initSchool()
-  } else {
-    return
-  }
-})()

@@ -1,14 +1,15 @@
-const { handleCookie, conf } = require('../../index')
-const { signApp } = require('../../campusphere/app')
+const { handleCookie, conf } = require('./cea')
+const { signApp } = require('./campusphere/app')
 
-// Grab users array
-const users = conf.get('users')
-// Grab school info
-const school = conf.get('school')
-
+let users, school
 async function handler() {
+  await conf.load()
+  // Grab users array
+  users = conf.get('users')
+  // Grab school info
+  school = conf.get('school')
   // Log in and save cookie to conf, using conf.get('cookie') to get them
-  await handleCookie()
+  await handleCookie(users, school)
   // wait * minute for signing
   await sleep(0)
   // Sign in
@@ -36,3 +37,4 @@ async function signIn() {
 }
 
 exports.main = handler
+handler()

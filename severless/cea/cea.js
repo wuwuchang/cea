@@ -1,17 +1,9 @@
 const conf = require('./init')
-
 const login = require('./crawler/casLogIn')
-const log = require('./interface/colorLog')
-
 const { signApp } = require('./campusphere/app')
 
 const school = conf.get('school')
 const users = conf.get('users')
-
-if (!users) {
-  log.error('未找到用户,请运行 ./init.js -u 配置')
-  process.exit(1)
-}
 
 /**
  * Keys of this cookie Object:
@@ -24,15 +16,15 @@ let cookie
 // purely for handleCookie func
 let storeCookiePath, sign
 
-/* get|store|update cookie synchronizedly */
-async function handleCookie() {
+// get|store|update cookie synchronizedly
+async function handleCookie(users, school) {
   for (let i of users) {
     storeCookiePath = `cookie.${i.alias || i.username}`
-    await handleLogin(i, conf.get(storeCookiePath))
+    await handleLogin(i, conf.get(storeCookiePath), school)
   }
 }
 
-async function handleLogin(i, storedCookie) {
+async function handleLogin(i, storedCookie, school) {
   const name = i.alias || i.username
 
   // Check if the cookie is user-provided
@@ -49,25 +41,23 @@ async function handleLogin(i, storedCookie) {
     sign = new signApp(school, i)
     const isNeedLogIn = await sign.signInfo(cookie)
     if (isNeedLogIn) {
-      log.warning(`${name}: cookie is not eligible, reLogin`)
+      console.log(`${name}: cookie is not eligible, reLogin`)
       cookie = await login(school, i)
       storeCookie(storeCookiePath, i, cookie)
     }
   } else {
-    log.success(`${name}: Using user provided cookie`)
+    console.log(`${name}: Using user provided cookie`)
   }
 }
-
-
 
 function storeCookie(path, i, set) {
   const name = i.alias || i.username
   if (set) {
     conf.set(storeCookiePath, set)
-    log.success(`${name}: Cookie stored to local storage`)
+    console.log(`${name}: Cookie stored to local storage`)
   } else {
     cookie = conf.get(path)
-    log.success(`${name}: Using stored cookie`)
+    console.log(`${name}: Using stored cookie`)
   }
 }
 
