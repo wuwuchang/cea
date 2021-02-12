@@ -7,8 +7,10 @@
 - [ ] 使用免费资源(记得勾选)
       `环境名称`填入 cea ⇢ 下一步 ⇢ 完成
 
-  > 剩下只需配置学校和用户信息
+  > 此函数会自动在每天 5:00 11:00 16:00 触发，需要自定义请参考 [cron](https://docs.cloudbase.net/cloud-function/timer-trigger.html#pei-zhi-xiang-jie)
+  >
+  > 剩下只需配置学校和用户信息即可完成部署
 
 2. 等待几秒(部署完成后) ⇢ 左栏`云函数` ⇢ 点击 `cea` 进入此函数配置界面 ⇢ `函数代码`拦下在线编辑器里修改 `conf.yml` 文件 ⇢ 相应注释都已写好，请自行填入 ⇢ 保存并测试，无报错则成功部署
 
-   ![示例](https://i.imgur.com/hwrS7Gj.png)
+   ![示例](https://i.imgur.com/ZhTS6Ol.png)
