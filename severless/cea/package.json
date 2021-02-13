@@ -24,6 +24,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@cloudbase/manager-node": "^3.9.0",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
     "js-yaml": "^4.0.0",

@@ -2,16 +2,26 @@ const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
 const log = require('./interface/colorLog')
+const CloudBase = require('@cloudbase/manager-node')
+const { functions } = new CloudBase({})
 
 class Conf {
-  get(key) {
-    return this[key]
+  get get(key) {
+    const string = process.env[key] || {}
+    return this[key] || JSON.parse(string)
   }
   set(key, value) {
     this[key] = value
+    const envVariables = {}
+    envVariables[key] = value
+    // Store conf as env, this shall not block function runtime
+    functions.updateFunctionConfig({
+      envVariables: JSON.stringify(envVariables),
+    })
   }
 }
-const conf = new Conf({ cwd: './node_modules' })
+
+const conf = new Conf()
 module.exports = conf
 module.exports.load = async () => {
   const path = './conf.yml'
