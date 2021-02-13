@@ -9,16 +9,11 @@ module.exports.load = async () => {
   const path = './conf.yml'
   if (fs.existsSync(path)) {
     const doc = yaml.load(fs.readFileSync(path, 'utf8'))
-    if (!doc) return
-    initUser(doc)
     if (!conf.get('school')) await initSchool(doc)
+    return doc.users
   } else {
-    return
+    console.log('No config file found')
   }
-}
-
-function initUser(doc) {
-  conf.set('users', doc.users)
 }
 
 async function initSchool(doc) {

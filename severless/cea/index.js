@@ -3,9 +3,8 @@ const { signApp } = require('./campusphere/app')
 
 let users, school
 async function handler() {
-  await conf.load()
-  // Grab users array
-  users = conf.get('users')
+  // Grab users array, update it when conf file changed
+  users = await conf.load()
   // Grab school info
   school = conf.get('school')
   // Log in and save cookie to conf, using conf.get('cookie') to get them
