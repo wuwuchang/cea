@@ -1,35 +1,9 @@
 const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
-const CloudBase = require('@cloudbase/manager-node')
-const { functions } = new CloudBase({})
+const Conf = require('@beetcb/tcb-conf')
+const conf = new Conf(10)
 
-// Make full use of functions `hot context`
-// https://docs.cloudbase.net/cloud-function/deep-principle.html#shi-li-fu-yong
-class Conf {
-  get(key) {
-    const conf = process.env.conf
-    return this[key] || (conf ? JSON.parse(conf)[key] : null)
-  }
-  set(key, value) {
-    this[key] = value
-    let timeUpdater
-      // Store conf as env, this shall not block function runtime
-    ;(() => {
-      timeUpdater ? clearTimeout(timeUpdater) : null
-      timeUpdater = setTimeout(
-        () =>
-          functions.updateFunctionConfig({
-            name: 'cea',
-            envVariables: { conf: JSON.stringify(this) },
-          }),
-        10000
-      )
-    })()
-  }
-}
-
-const conf = new Conf()
 module.exports = conf
 module.exports.load = async () => {
   const path = './conf.yml'
