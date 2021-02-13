@@ -1,7 +1,6 @@
 const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
-const log = require('./interface/colorLog')
 const CloudBase = require('@cloudbase/manager-node')
 const { functions } = new CloudBase({})
 
@@ -84,7 +83,7 @@ async function initSchool(doc) {
   }
 
   conf.set('school', school)
-  log.success(
+  console.log(
     `您的学校 ${schoolName} 已完成设定, 全局签到地址为：${
       school.addr ? school.addr : 'RANDOM'
     }`

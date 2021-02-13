@@ -2,8 +2,6 @@ const fetch = require('node-fetch')
 const crypto = require('crypto')
 const { v1 } = require('uuid')
 
-const log = require('../interface/colorLog')
-
 class campusphereApp {
   constructor(school) {
     this.signApi = {
@@ -59,7 +57,7 @@ exports.signApp = class signApp extends (
       this.curTask = signQ.datas.unSignedTasks[0]
       return false
     } catch (e) {
-      log.object(e)
+      console.log(e)
       return true
     }
   }
@@ -115,7 +113,7 @@ exports.signApp = class signApp extends (
       body: JSON.stringify(form),
     })
     res = await res.json()
-    log.warning(
+    console.log(
       `${this.user.alias || this.user.username} 的签到结果: ${res.message}`
     )
   }
