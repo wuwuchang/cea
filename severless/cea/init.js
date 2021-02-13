@@ -5,19 +5,28 @@ const log = require('./interface/colorLog')
 const CloudBase = require('@cloudbase/manager-node')
 const { functions } = new CloudBase({})
 
+// Make full use of functions `hot context`
+// https://docs.cloudbase.net/cloud-function/deep-principle.html#shi-li-fu-yong
 class Conf {
-  get get(key) {
-    const string = process.env[key] || {}
-    return this[key] || JSON.parse(string)
+  get(key) {
+    const conf = process.env.conf
+    return this[key] || (conf ? JSON.parse(conf)[key] : null)
   }
   set(key, value) {
     this[key] = value
-    const envVariables = {}
-    envVariables[key] = value
-    // Store conf as env, this shall not block function runtime
-    functions.updateFunctionConfig({
-      envVariables: JSON.stringify(envVariables),
-    })
+    let timeUpdater
+      // Store conf as env, this shall not block function runtime
+    ;(() => {
+      timeUpdater ? clearTimeout(timeUpdater) : null
+      timeUpdater = setTimeout(
+        () =>
+          functions.updateFunctionConfig({
+            name: 'cea',
+            envVariables: { conf: JSON.stringify(this) },
+          }),
+        10000
+      )
+    })()
   }
 }
 
