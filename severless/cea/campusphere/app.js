@@ -10,7 +10,6 @@ class campusphereApp {
       sign: `${school.origin}/wec-counselor-sign-apps/stu/sign/submitSign`,
       home: `${school.origin}/wec-counselor-sign-apps/stu/mobile`,
     }
-    this.addr = school.addr
     this.isSignAtHome = school.isSignAtHome
   }
 }
@@ -26,6 +25,7 @@ exports.signApp = class signApp extends (
       'content-type': 'application/json',
       connection: 'keep-alive',
     }
+    this.addr = school.addr
     this.user = user
   }
 
@@ -121,8 +121,9 @@ exports.signApp = class signApp extends (
   signAtHomePos() {
     // Hard coded position info
     // Randomly generated from http://api.map.baidu.com/lbsapi
-    const posGenFromCitys = this.addr
-      ? [this.addr]
+    const userAddr = this.user.addr
+    const posGenFromCitys = userAddr
+      ? [userAddr]
       : [
           ['116.622631', '40.204822', '北京市顺义区X012'],
           ['115.825701', '32.914915', '安徽省阜阳市颍泉区胜利北路79'],
