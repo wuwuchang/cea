@@ -1,8 +1,7 @@
 const fetch = require('node-fetch')
 const yaml = require('js-yaml')
 const fs = require('fs')
-const Conf = require('@beetcb/tcb-conf')
-const conf = new Conf(10)
+const conf = require('@beetcb/tcb-conf')
 
 module.exports = conf
 module.exports.load = async () => {
