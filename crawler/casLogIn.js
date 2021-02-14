@@ -2,7 +2,6 @@ const cheerio = require('cheerio')
 const fetch = require('node-fetch')
 
 const crypto = require('crypto')
-const log = require('../interface/colorLog')
 const ocr = require('./captcha')
 
 const headers = {
@@ -63,12 +62,12 @@ module.exports = async (school, user) => {
     headers,
   })
   if (Boolean((await res.json()).isNeed)) {
-    console.log('Captcha is required, trying to guess it')
+    log.warning('Captcha is required, trying to guess it')
     auth.set('captcha', await ocr(school.getCaptcha))
     if (auth.get('captcha').length === 4) {
-      console.log(`${name}: Login with captcha: ${auth.get('captcha')}`)
+      log.warning(`${name}: Login with captcha: ${auth.get('captcha')}`)
     } else {
-      console.log(`${name}: OCR captcha failed! ${auth.get('captcha')}`)
+      log.warning(`${name}: OCR captcha failed! ${auth.get('captcha')}`)
       return null
     }
   }
@@ -83,7 +82,7 @@ module.exports = async (school, user) => {
       method: 'POST',
     })
   } catch (e) {
-    console.log(e)
+    log.error(e)
   }
 
   reCook(res, 1, cookie)
@@ -98,15 +97,15 @@ module.exports = async (school, user) => {
       redirect: 'manual',
     })
   } catch (e) {
-    console.log(name)
-    console.log(res)
+    log.error(name)
+    log.object(res)
     return null
   }
 
   if (res.status === 302 && reCook(res, 0, cookie)) {
-    console.log(`用户${name}: Login Success`)
+    log.success(`用户${name}: Login Success`)
   } else {
-    console.log(`${res.statusText}: ${name}`)
+    log.error(`${res.statusText}: ${name}`)
     return null
   }
 
