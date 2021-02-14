@@ -26,9 +26,12 @@ async function initSchool(doc) {
 
   const origin = new URL(res.data[0].ampUrl).origin
   const isSignAtHome = doc.home
+  // make addr configurable
+  const addr = doc.addr
   const school = {
     origin,
     isSignAtHome,
+    addr,
     login: `${res.data[0].idsUrl}/login?service=${encodeURIComponent(
       origin
     )}/portal/login`,
