@@ -25,19 +25,21 @@ async function initSchool(doc) {
   res = await JSON.parse(await res.text())
 
   const origin = new URL(res.data[0].ampUrl).origin
+  const casOrigin = res.data[0].idsUrl
   const isSignAtHome = doc.home
   // make addr configurable
   const addr = doc.addr
   const school = {
+    casOrigin,
     origin,
     isSignAtHome,
     addr,
-    login: `${res.data[0].idsUrl}/login?service=${encodeURIComponent(
+    login: `${casOrigin}/login?service=${encodeURIComponent(
       origin
     )}/portal/login`,
     campusphere: `${origin}/portal/login`,
-    checkCaptcha: `${res.data[0].idsUrl}/checkNeedCaptcha.htl`,
-    getCaptcha: `${res.data[0].idsUrl}/getCaptcha.htl`,
+    checkCaptcha: `${casOrigin}/checkNeedCaptcha.htl`,
+    getCaptcha: `${casOrigin}/getCaptcha.htl`,
   }
 
   const schoolName = res.data[0].name

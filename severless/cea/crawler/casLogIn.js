@@ -2,7 +2,6 @@ const cheerio = require('cheerio')
 const fetch = require('node-fetch')
 
 const crypto = require('crypto')
-const log = require('../interface/colorLog')
 const ocr = require('./captcha')
 
 const headers = {
@@ -31,8 +30,8 @@ module.exports = async (school, user) => {
 
   // deal with anti crawlers
   headers.Referer = school.login
-  headers.Origin = school.origin
-  headers.Host = school.origin.replace(/http(s?)\:\/\//, '')
+  headers.Host = new URL(school.casOrigin).host
+  headers.Origin = `https://${headers.Host}`
 
   // get base session -> cookie
   res = await fetch(school.login, { headers })
@@ -88,6 +87,8 @@ module.exports = async (school, user) => {
 
   reCook(res, 1, cookie)
   delete headers['content-type']
+  delete headers.Host
+  headers.Referer = headers.Origin
 
   // get campus cookie
   try {
@@ -97,9 +98,9 @@ module.exports = async (school, user) => {
       headers,
       redirect: 'manual',
     })
+    console.log(redirect)
   } catch (e) {
-    console.log(name)
-    console.log(res)
+    console.log(e)
     return null
   }
 
